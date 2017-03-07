@@ -1,0 +1,148 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+ 	<parent>
+ 		<artifactId>acms</artifactId>	
+ 		<groupId>cn.edu.haut.cssp</groupId>
+ 		<version>0.0.1-SNAPSHOT</version>
+ 		<relativePath>..</relativePath>
+	</parent>
+  <artifactId>acms-web</artifactId>
+  <packaging>pom</packaging>
+  
+ 	<properties>
+		<mysql.version>5.1.6</mysql.version>
+		<antisamy.version>1.5.3</antisamy.version>
+		<fileupload.version>1.3.1</fileupload.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+		 	<groupId>cn.edu.haut.cssp</groupId>
+			<artifactId>acms-audit</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		 	<groupId>cn.edu.haut.cssp</groupId>
+			<artifactId>acms-baseinfo</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		 	<groupId>cn.edu.haut.cssp</groupId>
+			<artifactId>acms-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		 	<groupId>cn.edu.haut.cssp</groupId>
+			<artifactId>acms-device</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.owasp.antisamy</groupId>
+			<artifactId>antisamy</artifactId>
+			<version>${antisamy.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>${fileupload.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+	
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- compiler插件, 设定JDK版本 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			
+			<!-- ============== -->
+				<!-- war plugin -->
+				<!-- ============== -->
+		<!-- 	<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<warName>acms</warName>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+						<manifestEntries>
+							<Build-Version>${project.version}-${maven.build.timestamp}</Build-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin> -->
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.16</version>
+				<configuration>
+					<forkMode>once</forkMode>
+					<argLine>-Dfile.encoding=UTF-8 -XX:-UseSplitVerifier
+						-XX:MaxPermSize=768m ${surefireArgLine}</argLine>
+				</configuration>
+			</plugin>
+		
+			<!--  jetty -->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.26</version>
+				<configuration>
+					<webDefaultXml>webdefault.xml</webDefaultXml>
+					<stopKey>foo</stopKey>
+					<stopPort>4445</stopPort>
+					<connectors>
+						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+							<port>2010</port>
+						</connector>
+					</connectors>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jetty-sslengine</artifactId>
+						<version>6.1.26</version>
+					</dependency>
+					<dependency>
+			    		<groupId>org.apache.maven.plugins</groupId>
+					    <artifactId>maven-resources-plugin</artifactId>
+					    <version>2.4.3</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>

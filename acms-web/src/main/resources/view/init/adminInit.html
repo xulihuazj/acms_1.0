@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<embed width="0" height="0" type="application/NPCardCert" id="pluginXdja">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>初始化</title>
+<script type="text/javascript" src="${base}/script/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="${base}/script/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="${base}/themes/default/css_ecss/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="${base}/themes/default/css_ecss/style.css" />
+<@p.script value=["card","artDialog"] />
+<style>
+.init-admin td { padding-top: 5px; padding-bottom: 5px; }
+body{
+	background-color: #448E83;
+}
+.control-label-init{
+	line-height: 33px;
+}
+.form-control-init{
+	width: 100% !important; 
+}
+.int-page .row .col-xs-3{
+	text-align: right;
+}
+.int-page .row{
+	margin-top: 10px;
+}
+</style>
+</head>
+<body class="init" style="margin-top:10px">
+	<div class="init-pic"></div>
+	<div class="init-remind"></div>
+	<div class="container init-start" >
+		<div class="row">
+			<div class="col-xs-12">
+				<img src="${base}/themes/default/images/init/LOGO.PNG" width="121" class="center-block" style="margin-top:50px;">
+			</div>
+			<div class="col-xs-12">
+				<img src="${base}/themes/default/images/init/TEXT1.PNG" width="328" class="center-block" style="margin-top:50px;">
+			</div>
+			<div class="col-xs-12">
+				<p class="text-center init-error-desc" style="color: #fff;margin-top: 50px;">首次进入请点击下方按钮完成系统初始化</p>
+			</div>
+			<div class="col-xs-12 init-error-div">
+				<div class="init-warn  text-center" style="margin-top:50px;"><a id="initstart" href="javascript:" class="btn btn-default btn-green">开始初始化</a></div>
+			</div>
+		</div>
+	</div> 
+	
+	<div class="container-fluid init-login" style="display:none">
+		<div class="row" style="margin:0;">
+			<div class="col-xs-12">
+				<img src="${base}/themes/default/images/init/LOGO2.PNG" >
+			</div>
+			<div class="col-xs-12">
+				<p class="text-center" style="color: #fff;margin-top: 200px;font-size: 24px;font-size: 700;">恭喜您完成系统初始化设置</p>
+			</div>
+			<div class="col-xs-12">
+				<div class="init-warn  text-center" style="margin-top:50px;"><a href="${base}/login.do" class="btn btn-default btn-green">登录</a></div>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+var cardPlugin;
+var downLoadCSPPath = "${base}/downloads/readCard.rar";
+var remindDesc = "安全控件有新版本啦，请<a style='color: #BBB;' href='" + downLoadCSPPath + "'>下载</a>安装！";
+var errorDesc = {
+	'0':"未安装安全控件，请<a style='color: #BBB;' href='" + downLoadCSPPath + "'>下载</a>安装！",
+ 	'3':"安全控件有新版本啦，请<a style='color: #BBB;' href='" + downLoadCSPPath + "'>下载</a>安装！",
+ 	'-100':'您的浏览器不支持安全控件'
+};
+$(function(){
+	cardPlugin = Card.ready();
+	checkCard(1);
+	$("#initstart").click(function(){
+		if (!checkCard(1)) {
+			return;
+		}
+		var dialog = openDialog({
+			title:"系统初始化",
+			width:700,
+			height:300,
+			ajaxUrl:"initPage.do",
+			padding:'0px 0px',
+			ajaxSuccess:function(){
+			},
+			ok:function(){
+				if (!validateForm($("#initForm"))) {
+		 			showTip();
+	 		    	return false;
+				}
+				if ($("#password").val() != $("#repassword").val()) {
+			  		$alert('两次输入密码不一致！');
+	 		    	return false;
+				}
+				var flag = true;
+				$.ajax({
+					type: "POST",
+					url: "saveUser.do",
+					async: false,
+					data: $("#initForm").serialize(),
+					success: function(result){
+					  	if (result == "success") {
+					  		$('.init-start').hide();
+					  		$('.init-login').show();
+					  		$notice('系统初始化成功！');
+					  		dialog.close();
+					  	} else {
+							$alert(result);
+					  	}
+				  	}
+				});
+				return false;
+			},
+			cancel:function(){
+			    return true;
+			}
+		});
+	});
+});
+
+/**
+ * 安全卡信息检测
+ * type为1，父窗口弹出；type为2，子窗口显示错误信息。
+ */
+function checkCard(type) {
+	if(!cardPlugin.success){
+		if (type == 1) {
+			$('.init-error-desc').html(errorDesc[cardPlugin.code]);
+			$('.init-error-div').hide();
+		}else{
+			$('#addInitMessage').text(errorDesc[cardPlugin.code]);					
+		}
+		return false;
+	}else{
+		if (cardPlugin.newVer){
+			if (type == 1) {
+				$('.init-remind').html(remindDesc);
+			}
+		}
+		
+		//读取安全卡(uk和TF)
+		var cards = cardPlugin.readUserCard();
+		if(!cards.length){ //没有读取到卡
+			if (type == 1) {
+				$('.init-error-desc').html("请插入您的安全卡，然后刷新本页面");
+				$('.init-error-div').hide();
+			}else{
+				$('#addInitMessage').text("请插入您的安全卡，然后刷新本页面");					
+			}
+			return false;
+		}
+		if(cards.length > 1) {
+			if (type == 1) {
+				$('.init-error-desc').html("系统初始化只能插入一张安全卡");
+				$('.init-error-div').hide();
+			}else{
+				$('#addInitMessage').text("系统初始化只能插入一张安全卡");					
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+//读卡
+function readCard() {
+	if (!checkCard(2)) {
+		$("#sn").val('');
+		$("#cardId").val('');
+		return;
+	}
+	$('#addInitMessage').text("");
+	
+	//安全卡正确  安全卡号赋值
+	var cardId = cardPlugin.readUserCard()[0].getCardId();
+	var cardCert = cardPlugin.cardKit(cardId).getCert(4);
+	if(cardCert.success){
+		$("#sn").val(cardCert.cert);
+		$("#cardId").val(cardId);
+		$("#cardId").blur();
+	}else{
+		$alert("读取卡证书失败，请联系管理员修复安全卡");
+		return;
+	}
+}
+</script>
+</html>

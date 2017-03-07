@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/task  
+       http://www.springframework.org/schema/task/spring-task-4.0.xsd">    
+       
+    <!-- 自动扫描器 -->
+    <mvc:annotation-driven />    
+    <task:annotation-driven />
+    <context:component-scan
+        base-package="cn.edu.haut.acms.action, cn.edu.haut.acms.business.impl, cn.edu.haut.acms.dao, cn.edu.haut.acms.api" />
+    
+    <!-- 上传编译器 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 最大上传10M -->
+        <property name="maxUploadSize" value="10485760"/>
+        <property name="defaultEncoding" value="utf-8"></property>
+        <property name="resolveLazily" value="true"></property>
+    </bean>
+    
+    <context:property-placeholder ignore-unresolvable="true" location="classpath:/config.properties,classpath:/system.properties" />
+    
+    <bean class="cn.edu.haut.acms.common.StringEscapeEditor" />
+</beans>

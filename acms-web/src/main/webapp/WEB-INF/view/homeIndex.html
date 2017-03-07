@@ -1,0 +1,178 @@
+<!--<div class="span12">
+    <form class="form">Min: <input type="number" ng-model="chartConfig.xAxis.currentMin">
+        Max: <input type="number" ng-model="chartConfig.xAxis.currentMax">
+    </form>
+    <br/>
+    <button class="btn btn-primary" ng-click="addSeries()">Add Series</button>
+    <button class="btn btn-primary" ng-click="addPoints()">Add Points to Random Series</button>
+    <button class="btn btn-primary" ng-click="removeRandomSeries()">Remove Random Series</button>
+    <button class="btn btn-primary" ng-click="toggleLoading()">Loading?</button>
+    <p>Try zooming on the chart also...</p>
+</div>
+
+<div class="row col-sm-6 col-sm-offset-3" >
+    <highchart id="chart1" config="chartConfig" class="span10"></highchart>
+</div>-->
+
+<!-- 首页内容 -->
+<style>
+	.highcharts-xaxis-labels{
+		display: none !important;
+	}
+</style>
+<div class="homeIndexBg">
+	<div class="firstTileDiv titleDiv" ng-click="goToPersonDevList()">
+		<img class="leftTotalLogo" src="${base}/themes/default/images/total-device.png" />
+		<img class="rightTopLogo" src="${base}/themes/default/images/top1.png" />
+		<p class="leftTotalWord">截至当前时间</p>
+		<div class="rightTopDiv" style="top: -82px;">
+			<p class="rightTopNum" ng-bind="deviceNum"></p>
+			<p class="rightTopWord">所有设备的数量</p>
+		</div>
+	</div>
+
+	<div class="secondTileDiv titleDiv" ng-click="goToAuditLogList()">
+		<img class="leftTotalLogo" src="${base}/themes/default/images/against-device.png" />
+		<img class="rightTopLogo" src="${base}/themes/default/images/top2.png" />
+		<p class="leftTotalWord">截至当前时间</p>
+		<div class="rightTopDiv">
+			<p class="rightTopNum" ng-bind="violationDeviceNum"></p>
+			<p class="rightTopWord">违规的设备数量</p>
+		</div>
+	</div>
+
+	<div class="thirdTileDiv titleDiv" ng-click="goToBlackDevList()">
+		<img class="leftTotalLogo" src="${base}/themes/default/images/black-device.png" />
+		<img class="rightTopLogo" src="${base}/themes/default/images/top3.png" />
+		<p class="leftTotalWord">截至当前时间</p>
+		<div class="rightTopDiv">
+			<p class="rightTopNum" ng-bind="blackListDeviceNum"></p>
+			<p class="rightTopWord">黑名单中的设备数量</p>
+		</div>
+	</div>
+
+	<div class="fourthTileDiv titleDiv" ng-click="goToFlowList()">
+		<img class="leftTotalLogo" src="${base}/themes/default/images/overdata-device.png" />
+		<img class="rightTopLogo" src="${base}/themes/default/images/top4.png" />
+		<p class="leftTotalWord">截至当前时间</p>
+		<div class="rightTopDiv">
+			<p class="rightTopNum" ng-bind="flowDataDeviceNum"></p>
+			<p class="rightTopWord">超流量的设备数量</p>
+		</div>
+	</div>
+	<div class="clearfloat"></div>
+	<div class="leftMapDiv">
+		<div class="headTitle">
+			<p class="float-left fc6">
+				设备定位地图
+			</p>
+			<p class="float-right" ng-click="goToLocateAndLostList()">
+				<a>更多定位功能</a>
+			</p>
+		</div>
+		<div class="leftMap" id="mapContainer"></div>
+		<div class="input-group icon-search homeSearch">
+			<input type="text" placeholder="搜索人员..." class="form-control" ng-model="searchKey" ng-keyup="myKeyup($event)" style="box-shadow: none;border-color: #cccccc;">
+			<span class="input-group-addon" style="background-color: #FFFFFF;">
+				<span style="border-left: 1px solid #cccccc;">&nbsp;</span>
+				<img src="${base}/themes/default/images/locate.png">
+				<span class="inputAddCon" ng-bind="actualDeviceNum">
+				</span>
+				台设备
+			</span>
+	        <span class="input-group-addon" style="background-color: #3385ff;">
+	            <span class="glyphicon glyphicon-search" style="color: #fff;" ng-click="searchPerson()"></span>
+	        </span>
+		</div>
+	</div>
+	<div class="rightAppDiv">
+		<div class="headTitle">
+			<p class="float-left fc6">
+				安装量最多的应用
+			</p>
+			<p class="float-right" ng-click="goToAppOperationList()">
+				<a>更多应用监测</a>
+			</p>
+		</div>
+		<div style="padding-right: 10px; color: #666;">
+			<ul>
+				<li class="limitAppList" ng-repeat="appInfo in applist">
+					<span class="appNum" ng-style="appInfo.style" ng-bind="$index+1"></span>
+					<img class="homeAppLogo" src="{{ supportB64 == true ? appInfo.icon : '${base}/ecss/downloadImg.do?imgId=' + appInfo.appId}}" style="width: 40px;" />
+					<span ng-bind="appInfo.name"></span>
+					<p class="fc9 table-whitespace" title="{{appInfo.version}}" style="width: 190px;"><span ng-bind="appInfo.version"></span></p>
+					<span style="float:right;position: relative;top: -30px;">
+						<img src="${base}/themes/default/images/homeSet.png" />
+						<span ng-bind="appInfo.installCount"></span>台设备已安装
+					</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="clearfloat"></div>
+	<div class="leftChartDiv">
+		<div class="headTitle">
+			<p class="float-left fc6">
+				设备所处状态分布
+			</p>
+			<p class="float-right" ng-click="goToPersonDevList()">
+				<a>更多设备状态</a>
+			</p>
+		</div>
+		<div style="width: 100%;padding: 20px;height: 350px;">
+			<div style="border: 1px solid #ececec;" >
+				<highchart style="width: 100%;height: 350px;" id="chart1" config="chartConfig"></highchart>
+			</div>
+		</div>
+	</div>
+	<div class="rightTableDiv">
+		<div class="headTitle">
+			<p class="float-left fc6">
+				设备违规处理
+			</p>
+			<p class="float-right" ng-click="goToAuditLogList()">
+				<a>更多</a>
+			</p>
+		</div>
+		<div class="bottomTableDiv">
+			<table class="homeTable">
+				<thead>
+					<th style="padding: 0px 10px;">序号</th>
+					<th>设备所有人</th>
+					<th>警号</th>
+					<th>违规事件</th>
+					<th style="width:150px;">时间</th>
+					<th>操作</th>
+				</thead>
+				<tr ng-repeat="violation in violationList">
+					<td style="padding: 0px 10px;" ng-bind="$index+1"></td>
+					<td ng-bind="violation.personName"></td>
+					<td>
+						<span ng-bind="violation.personCode"></span>
+					</td>
+					<td>
+						<span class="gradeSpan" ng-class="{'spanBg1':violation.violationGrade=='一级违规','spanBg2':violation.violationGrade=='二级违规','spanBg3':violation.violationGrade=='三级违规'}"  ng-bind="violation.violationGrade"></span>
+						<span ng-bind="violation.violationName"></span>
+					</td>
+					<td>
+						<div style="width: 150px" class="table-whitespace"  ng-bind="violation.violationTime | date:'yyyy-MM-dd HH:mm' "></div>
+					</td>
+					<td><p style="cursor: pointer;" ng-click="auditDialog(violation)"><a>审计</a></p></td>
+				</tr>
+			</table>
+			<p class="bottomTableMore" ng-click="goToAuditLogList()" style="cursor: pointer;">
+				<a>查看更多</a>
+			</p>
+		</div>
+	</div>
+</div>
+
+<section ng-show="alert.msg" style="position: absolute; top: 20px; left: 400px; right: 400px; z-index: 9999;">
+    <div class="alert ng-scope ng-isolate-scope alert-dismissable" ng-class="['alert-' + (alert.type || 'warning'), alert.closeable ? 'alert-dismissable' : null]" role="alert">
+        <button ng-show="alert.closeable" type="button" class="close" ng-click="alert=null" data-dismiss="alert" aria-label="close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div>
+            <span class="ng-scope ng-binding" ng-bind="alert.msg"></span></div>
+    </div>
+</section>

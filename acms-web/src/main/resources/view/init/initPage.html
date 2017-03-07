@@ -1,0 +1,136 @@
+<div id="init-content">
+<div style="margin-top: 10px; height: 20px;">
+	<font id="addInitMessage" color="red"></font>
+</div>
+<form id="initForm" action="${base}/init/saveUser.do" method="post">
+	<input type="hidden" id="sn" name="sn"/>
+	<div class="container-fluid int-page" style="margin-bottom:20px;">
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init"><font color="red">*</font>&nbsp;集团名称&nbsp;:</label>
+				    <div class="col-xs-9">
+				      <input id="ecName" class="form-control form-control-init" name="ecName" type="text" reg="notempty" tip="请输入集团名称，不允许为空"/>
+				    </div>
+			    </div>
+			</div>
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init"><font color="red">*</font>&nbsp;联系人姓名&nbsp;:</label>
+				    <div class="col-xs-9">
+				      <input id="linkMan" class="form-control form-control-init" name="linkMan" type="text" reg="notempty" tip="请输入联系人姓名，不允许为空"/>
+				    </div>
+			    </div>
+			</div>
+		</div><!--/.row -->
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init"><font color="red">*</font>&nbsp;登录名&nbsp;:</label>
+				    <div class="col-xs-9">
+				      <input id="userName" class="form-control form-control-init" name="userName" type="text" reg="notempty" tip="请输入登录名，不允许为空"/>
+				    </div>
+			    </div>
+			</div>
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init"><font color="red">*</font>&nbsp;密码&nbsp;:</label>
+				    <div class="col-xs-9">
+				      <input id="password" class="form-control form-control-init"  name="password" type="password" reg="notempty,minLength:6" tip="请输入密码，不允许为空"/>
+				    </div>
+			    </div>
+			</div>
+		</div><!--/.row -->
+		
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init"><font color="red">*</font>&nbsp;确认密码&nbsp;:</label>
+				    <div class="col-xs-9">
+				      <input id="repassword" class="form-control form-control-init" type="password" reg="notempty,minLength:6" tip="请输入确认密码，不允许为空"/>
+				    </div>
+			    </div>
+			</div>
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init"><font color="red">*</font>&nbsp;安全卡&nbsp;:</label>
+				    <div class="col-xs-7" style="height:35px;">
+				      <input id="cardId" class="form-control form-control-init"  name="cardId" type="text" readonly="readonly" reg="notempty"/>&nbsp;
+				    </div>
+				    <div class="col-xs-2"><input class="readCard btn btn-default" type="button" value="读卡" onclick="readCard()"/></div>
+			    </div>
+			</div>
+		</div><!--/.row -->
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init">手机号码 :</label>
+				    <div class="col-xs-9">
+				      <input id="mobile" class="form-control form-control-init"  name="mobile" type="text" maxlength="11" reg="mobile" message="{mobile:'手机号码格式不正确'}"/>
+				    </div>
+			    </div>
+			</div>
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init">固定电话 :</label>
+				    <div class="col-xs-9">
+				    	<input id="phone" class="form-control form-control-init" name="phone" type="text" maxlength="16" reg="tel"/>
+				    </div>
+			    </div>
+			</div>
+		</div><!--/.row -->
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init">电子邮箱 :</label>
+				    <div class="col-xs-9">
+				    	<input type="text" class="form-control form-control-init"  name="email" id="email" maxlength="32" reg="email" message="{email:'电子邮箱格式不正确'}"/>
+				    </div>
+			    </div>
+			</div>
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init">传真号码 :</label>
+				    <div class="col-xs-9">
+				    	<input type="text" class="form-control form-control-init" name="faxCode" id="faxCode" maxlength="16" reg="tel" message="{tel:'传真号码格式不正确'}"/>
+				    </div>
+			    </div>
+			</div>
+		</div><!--/.row -->
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init">邮编 :</label>
+				    <div class="col-xs-9">
+				    	<input type="text"  class="form-control form-control-init" name="postCode" id="postCode" maxlength="16" reg="zipcode" message="{zipcode:'邮编格式不正确'}"/>
+				    </div>
+			    </div>
+			</div>
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init">通讯地址 :</label>
+				    <div class="col-xs-9">
+				    	<input type="text" class="form-control form-control-init"  name="address" maxlength="32" id="address"/>
+				    </div>
+			    </div>
+			</div>
+		</div><!--/.row -->
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="form-group">
+				    <label  class="col-xs-3 control-label control-label-init">备注 :</label>
+				    <div class="col-xs-9">
+				    	<textarea name="note" class="form-control form-control-init" id="note" maxlength="100" reg="maxLength:100"></textarea>
+				    </div>
+			    </div>
+			</div>
+		</div><!--/.row -->
+	</div>
+</form>
+</div>
